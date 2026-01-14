@@ -1,0 +1,21 @@
+{
+  "name": "@webhandle/tripartite-renderer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "setup-tripartite-renderer.mjs",
+  "scripts": {
+    "test": "node test/all.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "file-sink": "^1.0.15",
+    "filter-log": "^1.0.13",
+    "tripartite": "^1.1.5"
+  },
+  "devDependencies": {
+    "@webhandle/express-5": "github:EmergentIdeas/webhandle-express-5"
+  }
+}
