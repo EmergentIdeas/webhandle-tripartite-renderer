@@ -24,9 +24,13 @@ export default function setupTripartiteRenderer(webhandle) {
 		let scoped = tri.createBlank()
 		scoped.loaders = this.tripartiteTemplateLoaders.map(loader => createCachingLoader(loader, {}))
 		scoped.dataFunctions = Object.assign({}, tri.dataFunctions)
+		scoped.dataFunctions.webhandle = webhandle
 
 		if (this.app) {
 			let viewPaths = this.app.get('views')
+			if(viewPaths && Array.isArray(viewPaths) === false) {
+				viewPaths = [viewPaths]
+			}
 			for (let viewPath of viewPaths) {
 				let absPath = webhandle.getAbsolutePathFromProjectRelative(viewPath)
 				let sink = new FileSink(absPath)
