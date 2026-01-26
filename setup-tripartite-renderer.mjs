@@ -18,6 +18,7 @@ export default function setupTripartiteRenderer(webhandle) {
 			loader = createCachingLoader(loader, {})
 		}
 		this.tripartiteTemplateLoaders.push(loader)
+		return loader
 	}
 
 	webhandle.createScopedTripartite = function () {
