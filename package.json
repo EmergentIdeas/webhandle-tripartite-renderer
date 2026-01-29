@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@webhandle/initialize-webhandle-component": "github:EmergentIdeas/webhandle-initialize-webhandle-component",
     "file-sink": "^1.0.15",
     "filter-log": "^1.0.13",
     "tripartite": "^1.1.5"
