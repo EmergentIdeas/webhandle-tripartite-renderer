@@ -14,18 +14,25 @@ export default function setupTripartiteRenderer(webhandle) {
 		let absPath = webhandle.getAbsolutePathFromProjectRelative(path)
 		let sink = new FileSink(absPath)
 		let loader = createTripartiteFileLoader(sink)
+		
+		if(immutable === undefined) {
+			immutable = !webhandle.development
+		}
+		
 		if(immutable) {
 			loader = createCachingLoader(loader, {})
 		}
 		this.tripartiteTemplateLoaders.push(loader)
-		return loader
+		let info = {
+			loader, sink, path: absPath, immutable
+		}
+		return info
 	}
 
 	webhandle.createScopedTripartite = function () {
 		let scoped = tri.createBlank()
 		scoped.loaders = this.tripartiteTemplateLoaders.map(loader => createCachingLoader(loader, {}))
 		scoped.dataFunctions = Object.assign({}, tri.dataFunctions)
-		scoped.dataFunctions.webhandle = webhandle
 
 		if (this.app) {
 			let viewPaths = this.app.get('views')
@@ -44,7 +51,9 @@ export default function setupTripartiteRenderer(webhandle) {
 	}
 
 	if (webhandle.app && webhandle.app.engine) {
-		webhandle.app.engine('tri', async (filePath, options, callback) => { // define the template engine
+		
+		// define the template engine
+		webhandle.app.engine('tri', async (filePath, options, callback) => { 
 			let triInstance = webhandle.createScopedTripartite()
 			let absViewPaths = webhandle.app.get('views').map(view => webhandle.getAbsolutePathFromProjectRelative(view))
 			let name = determineTemplateName(filePath, absViewPaths)
@@ -67,7 +76,9 @@ export default function setupTripartiteRenderer(webhandle) {
 				}
 			})
 		})
-		webhandle.app.set('view engine', 'tri') // register the template engine
+
+		// register the template engine
+		webhandle.app.set('view engine', 'tri') 
 	}
 
 	function changeResponseForTripartite(req, res, next) {
@@ -75,6 +86,7 @@ export default function setupTripartiteRenderer(webhandle) {
 			res.oldInternalRender = res.internalRender
 
 			let resTri = res.tri = webhandle.createScopedTripartite()
+			resTri.dataFunctions.externalResources = res.externalResources
 
 			res.internalRender = function (name, data, callback, destination) {
 				resTri.loadTemplate(name, function (template) {
