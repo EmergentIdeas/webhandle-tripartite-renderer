@@ -9,6 +9,7 @@ import FileSink from 'file-sink'
 
 export default function setupTripartiteRenderer(webhandle) {
 	webhandle.tripartiteTemplateLoaders = []
+	webhandle.tripartite = tri
 
 	webhandle.addTemplateDir = function (path, { immutable } = {}) {
 		let absPath = webhandle.getAbsolutePathFromProjectRelative(path)
