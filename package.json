@@ -11,12 +11,16 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@webhandle/initialize-webhandle-component": "github:EmergentIdeas/webhandle-initialize-webhandle-component",
+    "@webhandle/initialize-webhandle-component": "^1.0.1",
     "file-sink": "^1.0.15",
     "filter-log": "^1.0.13",
     "tripartite": "^1.1.5"
   },
   "devDependencies": {
-    "@webhandle/express-5": "github:EmergentIdeas/webhandle-express-5"
+    "@webhandle/express-5": "^1.0.0"
   }
+  , "files": [
+	"README.md"
+	, "*.mjs"
+  ]
 }
