@@ -19,3 +19,10 @@ Run after express has been configured.
 import setupTripartiteRenderer from '@webhandle/tripartite-renderer/setup-tripartite-renderer.mjs'
 setupTripartiteRenderer(webhandleInstance)
 ```
+
+
+Also provides the tripartite library.
+
+```js
+import {tripartite} from "tripartite"
+```

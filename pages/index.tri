@@ -1,0 +1,4 @@
+__::start__
+
+<script type="module" src="/test.mjs"></script>
+__::end__

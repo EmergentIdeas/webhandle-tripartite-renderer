@@ -1,6 +1,6 @@
 {
   "name": "@webhandle/tripartite-renderer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "setup-tripartite-renderer.mjs",
   "scripts": {
@@ -17,10 +17,13 @@
     "tripartite": "^1.1.5"
   },
   "devDependencies": {
-    "@webhandle/express-5": "^1.0.0"
-  }
-  , "files": [
-	"README.md"
-	, "*.mjs"
+    "@webhandle/express-5": "^1.0.0",
+    "@webhandle/external-resource-manager": "^1.0.2",
+    "@webhandle/pages-server": "^1.0.0"
+  },
+  "files": [
+    "README.md",
+    "*.mjs"
+	, "resources"
   ]
 }
