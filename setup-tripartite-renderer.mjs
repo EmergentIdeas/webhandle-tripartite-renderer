@@ -3,13 +3,17 @@ import tripartite from 'tripartite'
 let log = filterLog('webhandle', { component: 'tripartite render' })
 let tri = tripartite
 import createCachingLoader from '@webhandle/core/lib/loaders/create-caching-loader.mjs'
+import createMemberLoader from '@webhandle/core/lib/loaders/create-member-loader.mjs'
 import determineTemplateName from './determine-template-name.mjs'
 import createTripartiteFileLoader from "@webhandle/core/lib/loaders/create-tripartite-template-loader.mjs"
 import FileSink from 'file-sink'
 
 export default function setupTripartiteRenderer(webhandle) {
 	webhandle.tripartiteTemplateLoaders = []
+	webhandle.tripartiteTemplates = {}
 	webhandle.tripartite = tri
+	
+	webhandle.tripartiteTemplateLoaders.push(createMemberLoader(webhandle.tripartiteTemplates))
 
 	webhandle.addTemplateDir = function (path, { immutable } = {}) {
 		let absPath = webhandle.getAbsolutePathFromProjectRelative(path)
@@ -28,6 +32,10 @@ export default function setupTripartiteRenderer(webhandle) {
 			loader, sink, path: absPath, immutable
 		}
 		return info
+	}
+
+	webhandle.addTemplate = function (path, template) {
+		webhandle.tripartiteTemplates[path] = template
 	}
 
 	webhandle.createScopedTripartite = function () {
@@ -90,27 +98,32 @@ export default function setupTripartiteRenderer(webhandle) {
 			resTri.dataFunctions.externalResources = res.externalResources
 
 			res.internalRender = function (name, data, callback, destination) {
+				function runTemplate(template) {
+					data = data || res.locals
+					template(data, destination, function (err) {
+						if (err) {
+							log.error(err)
+						}
+						try {
+							destination.end()
+						}
+						catch (e) {
+							log.error(e)
+						}
+						if (callback) {
+							return callback()
+						}
+					})
+				}
+				
 				resTri.loadTemplate(name, function (template) {
 					if (template) {
-						data = data || res.locals
-						template(data, destination, function (err) {
-							if (err) {
-								log.error(err)
-							}
-							try {
-								destination.end()
-							}
-							catch (e) {
-								log.error(e)
-							}
-							if (callback) {
-								return callback()
-							}
-						})
+						runTemplate(template)
 					} else {
 						res.oldInternalRender(name, data, callback)
 					}
 				})
+				
 			}
 			next()
 		}
