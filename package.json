@@ -1,6 +1,6 @@
 {
   "name": "@webhandle/tripartite-renderer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "setup-tripartite-renderer.mjs",
   "scripts": {
@@ -28,6 +28,7 @@
   "files": [
     "README.md",
     "*.mjs",
-    "resources"
+    "resources",
+	"lib"
   ]
 }
