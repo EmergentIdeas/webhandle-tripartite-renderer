@@ -1,10 +1,14 @@
 {
   "name": "@webhandle/tripartite-renderer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "setup-tripartite-renderer.mjs",
   "scripts": {
-    "test": "node test/all.mjs"
+    "test": "node test/all.mjs",
+    "start": "node --watch --inspect ./test/test-server.mjs",
+    "build": "webpack-cli --config tripartite.webpack.cjs",
+    "build-watch": "webpack-cli --watch --config tripartite.webpack.cjs",
+    "dev": "parallelshell 'npm run start' 'npm run build-watch'"
   },
   "keywords": [],
   "author": "",
@@ -14,7 +18,7 @@
     "@webhandle/initialize-webhandle-component": "^1.0.1",
     "file-sink": "^1.0.15",
     "filter-log": "^1.0.13",
-    "tripartite": "^1.1.5"
+    "tripartite": "^1.1.7"
   },
   "devDependencies": {
     "@webhandle/express-5": "^1.0.0",
@@ -23,7 +27,7 @@
   },
   "files": [
     "README.md",
-    "*.mjs"
-	, "resources"
+    "*.mjs",
+    "resources"
   ]
 }

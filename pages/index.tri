@@ -1,4 +1,7 @@
 __::start__
 
+__'json'::renderTemplateSource__
+__'json'::renderTemplateSource__
+
 <script type="module" src="/test.mjs"></script>
 __::end__

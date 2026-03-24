@@ -7,6 +7,7 @@ import createMemberLoader from '@webhandle/core/lib/loaders/create-member-loader
 import determineTemplateName from './determine-template-name.mjs'
 import createTripartiteFileLoader from "@webhandle/core/lib/loaders/create-tripartite-template-loader.mjs"
 import FileSink from 'file-sink'
+import createRenderTemplateSource from './lib/create-render-template-source.mjs'
 
 export default function setupTripartiteRenderer(webhandle) {
 	webhandle.tripartiteTemplateLoaders = []
@@ -96,6 +97,9 @@ export default function setupTripartiteRenderer(webhandle) {
 
 			let resTri = res.tri = webhandle.createScopedTripartite()
 			resTri.dataFunctions.externalResources = res.externalResources
+			
+			let renderTemplateSource = createRenderTemplateSource(resTri)
+			resTri.addTemplate('renderTemplateSource', renderTemplateSource)
 
 			res.internalRender = function (name, data, callback, destination) {
 				function runTemplate(template) {
