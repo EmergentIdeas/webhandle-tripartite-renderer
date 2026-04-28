@@ -9,6 +9,13 @@ import createTripartiteFileLoader from "@webhandle/core/lib/loaders/create-tripa
 import FileSink from 'file-sink'
 import createRenderTemplateSource from './lib/create-render-template-source.mjs'
 
+function makeArray(data) {
+	if(Array.isArray(data)) {
+		return data
+	}
+	return [data]
+}
+
 export default function setupTripartiteRenderer(webhandle) {
 	webhandle.tripartiteTemplateLoaders = []
 	webhandle.tripartiteTemplates = {}
@@ -65,7 +72,7 @@ export default function setupTripartiteRenderer(webhandle) {
 		// define the template engine
 		webhandle.app.engine('tri', async (filePath, options, callback) => { 
 			let triInstance = webhandle.createScopedTripartite()
-			let absViewPaths = webhandle.app.get('views').map(view => webhandle.getAbsolutePathFromProjectRelative(view))
+			let absViewPaths = makeArray(webhandle.app.get('views')).map(view => webhandle.getAbsolutePathFromProjectRelative(view))
 			let name = determineTemplateName(filePath, absViewPaths)
 			triInstance.loadTemplate(name, function (template) {
 				if (template) {
