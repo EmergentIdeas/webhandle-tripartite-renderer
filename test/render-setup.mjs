@@ -25,7 +25,7 @@ webhandle.routers.primary.get('/template', (req, res, next) => {
 test("check render results", async (t) => {
 	await t.test('express render', async (t) => {
 		let pr = new Promise((resolve, reject) => {
-			webhandle.app.render('one', { name: 'Dan' }, (content) => {
+			webhandle.app.render('one', { name: 'Dan' }, (err, content) => {
 				try {
 					assert.equal(content, 'Hello, Dan!', "Rendered content was wrong.")
 					resolve()
@@ -40,7 +40,7 @@ test("check render results", async (t) => {
 	})
 	await t.test('webhandle direct render', async (t) => {
 		let pr = new Promise((resolve, reject) => {
-			webhandle.render('one', { name: 'Dan' }, (content) => {
+			webhandle.render('one', { name: 'Dan' }, (err, content) => {
 				try {
 					assert.equal(content, 'Hello, Dan!', "Rendered content was wrong.")
 					resolve()
@@ -52,6 +52,10 @@ test("check render results", async (t) => {
 
 		})
 		return pr
+	})
+	await t.test('webhandle direct render async', async (t) => {
+		let content = await webhandle.render('one', { name: 'Dan' })
+		assert.equal(content, 'Hello, Dan!', "Rendered content was wrong.")
 	})
 	await t.test('fetched render', async (t) => {
 		let response = await fetch('http://localhost:3000/template')

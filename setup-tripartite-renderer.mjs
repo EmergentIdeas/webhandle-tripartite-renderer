@@ -82,7 +82,7 @@ export default function setupTripartiteRenderer(webhandle) {
 							log.error(err)
 						}
 						if (callback) {
-							return callback(content)
+							return callback(null, content)
 						}
 					})
 				}
