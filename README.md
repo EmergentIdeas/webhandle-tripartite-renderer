@@ -20,6 +20,25 @@ import setupTripartiteRenderer from '@webhandle/tripartite-renderer/setup-tripar
 setupTripartiteRenderer(webhandleInstance)
 ```
 
+To add a directory of templates, call:
+
+```js
+webhandle.addTemplateDir(path, {
+	immutable: false,
+	fixedSetOfTemplates: false,
+	removableTemplates: false
+})
+```
+
+`immutable` indicates it's safe to cache the views. If `immutable` is not set, it is assumed to be
+true unless the app is in development mode, in which case it's assumed to be false.
+
+`fixedSetOfTemplates` indicates that while the content of the templates could change, the templates
+available will not.
+
+`removableTemplates` set to true indicates that even a template once found may not be there any more.
+
+
 
 Also provides the tripartite library to the page.
 

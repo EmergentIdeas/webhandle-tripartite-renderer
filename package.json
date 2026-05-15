@@ -1,10 +1,11 @@
 {
   "name": "@webhandle/tripartite-renderer",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "setup-tripartite-renderer.mjs",
   "scripts": {
     "test": "node test/all.mjs",
+    "testDebug": "node --inspect-brk test/all.mjs",
     "start": "node --watch --inspect ./test/test-server.mjs",
     "build": "webpack-cli --config tripartite.webpack.cjs",
     "build-watch": "webpack-cli --watch --config tripartite.webpack.cjs",
@@ -29,6 +30,6 @@
     "README.md",
     "*.mjs",
     "resources",
-	"lib"
+    "lib"
   ]
 }

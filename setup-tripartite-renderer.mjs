@@ -8,6 +8,9 @@ import determineTemplateName from './determine-template-name.mjs'
 import createTripartiteFileLoader from "@webhandle/core/lib/loaders/create-tripartite-template-loader.mjs"
 import FileSink from 'file-sink'
 import createRenderTemplateSource from './lib/create-render-template-source.mjs'
+import createRememberFoundLoader from "@webhandle/core/lib/loaders/create-remember-found-loader.mjs"
+import createRememberPassingLoader from "@webhandle/core/lib/loaders/create-remember-passing-loader.mjs"
+import createCompositeLoader from '@webhandle/core/lib/loaders/create-composite-loader.mjs'
 
 function makeArray(data) {
 	if(Array.isArray(data)) {
@@ -22,8 +25,9 @@ export default function setupTripartiteRenderer(webhandle) {
 	webhandle.tripartite = tri
 	
 	webhandle.tripartiteTemplateLoaders.push(createMemberLoader(webhandle.tripartiteTemplates))
+	webhandle.appViewDirectoryLoaders = {}
 
-	webhandle.addTemplateDir = function (path, { immutable } = {}) {
+	webhandle.addTemplateDir = function (path, { immutable, fixedSetOfTemplates, removableTemplates } = {}) {
 		let absPath = webhandle.getAbsolutePathFromProjectRelative(path)
 		let sink = new FileSink(absPath)
 		let loader = createTripartiteFileLoader(sink)
@@ -31,10 +35,27 @@ export default function setupTripartiteRenderer(webhandle) {
 		if(immutable === undefined) {
 			immutable = !webhandle.development
 		}
+		if(removableTemplates === undefined) {
+			removableTemplates = false
+		}
 		
 		if(immutable) {
+			// indicates we only need to perform the load once for each key and the value will never change
 			loader = createCachingLoader(loader, {})
 		}
+		else if(fixedSetOfTemplates === true) {
+			// the value of the template may change, but if it's there once it will always be there
+			// and if it's not there once, it will never be there
+			loader = createRememberPassingLoader(loader)
+		}
+		else if(removableTemplates === false) {
+			// the value of the template may change, but if it's there once it will always be there
+			// however, it's possible templates still get added, so we won't assume that if we looked once
+			// without finding it that we'll never be able to load it with this loader.
+			loader = createRememberFoundLoader(loader)
+		}
+		
+
 		this.tripartiteTemplateLoaders.push(loader)
 		let info = {
 			loader, sink, path: absPath, immutable
@@ -48,21 +69,32 @@ export default function setupTripartiteRenderer(webhandle) {
 
 	webhandle.createScopedTripartite = function () {
 		let scoped = tri.createBlank()
-		scoped.loaders = this.tripartiteTemplateLoaders.map(loader => createCachingLoader(loader, {}))
-		scoped.dataFunctions = Object.assign({}, tri.dataFunctions)
-
+		
+		let componentLoaders = []
 		if (this.app) {
 			let viewPaths = this.app.get('views')
 			if(viewPaths && Array.isArray(viewPaths) === false) {
 				viewPaths = [viewPaths]
 			}
 			for (let viewPath of viewPaths) {
-				let absPath = webhandle.getAbsolutePathFromProjectRelative(viewPath)
-				let sink = new FileSink(absPath)
-				let loader = createTripartiteFileLoader(sink)
-				scoped.loaders.push(loader)
+				if(viewPath in webhandle.appViewDirectoryLoaders === false) {
+					let absPath = webhandle.getAbsolutePathFromProjectRelative(viewPath)
+					let sink = new FileSink(absPath)
+					let loader = createTripartiteFileLoader(sink)
+					loader = createRememberFoundLoader(loader)
+					webhandle.appViewDirectoryLoaders[viewPath] = loader
+				}
+
+				componentLoaders.push(webhandle.appViewDirectoryLoaders[viewPath])
 			}
 		}
+		
+		componentLoaders.push(...this.tripartiteTemplateLoaders)
+
+		// the composite loader is status aware and can check all the other loaders to see if it can speed up the
+		// process
+		scoped.loaders = [createCompositeLoader(...componentLoaders)]
+		scoped.dataFunctions = Object.assign({}, tri.dataFunctions)
 
 		return scoped
 	}
