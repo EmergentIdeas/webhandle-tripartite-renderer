@@ -38,6 +38,14 @@ available will not.
 
 `removableTemplates` set to true indicates that even a template once found may not be there any more.
 
+To add a single template based on a function, call
+
+```js
+webhandle.addTemplate(name, function(data) {/*...*/})
+```
+
+
+
 
 
 Also provides the tripartite library to the page.
